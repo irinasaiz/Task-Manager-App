@@ -1,3 +1,7 @@
+using Domain.Interfaces;
+using Domain.Services;
+using Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// DI
+builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepository>(); //one for the whole app
+builder.Services.AddScoped<TaskService>(); //one per HTTP request
 
 var app = builder.Build();
 
