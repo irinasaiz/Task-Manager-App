@@ -16,7 +16,7 @@ public class TasksController : ControllerBase
     public async Task<ActionResult<IEnumerable<TaskResponse>>> GetAll(CancellationToken ctx)
     {
         var tasks = await _service.GetAllAsync(ctx);
-        var resp = tasks.Select(t => new TaskResponse { Id = t.Id, Name = t.Name, IsCompleted = t.IsCompleted });
+        var resp = tasks.Select(t => new TaskResponse { Id = t.Id, Name = t.Name });
         return Ok(resp);
     }
 
@@ -26,7 +26,7 @@ public class TasksController : ControllerBase
         var task = (await _service.GetAllAsync(ctx)).FirstOrDefault(t => t.Id == id);
         if (task == null)
             return NotFound();
-        var resp = new TaskResponse { Id = task.Id, Name = task.Name, IsCompleted = task.IsCompleted };
+        var resp = new TaskResponse { Id = task.Id, Name = task.Name };
         return Ok(resp);
     }
 
@@ -36,7 +36,7 @@ public class TasksController : ControllerBase
         try
         {
             var t = await _service.CreateAsync(req.Name, ctx);
-            var resp = new TaskResponse { Id = t.Id, Name = t.Name, IsCompleted = t.IsCompleted };
+            var resp = new TaskResponse { Id = t.Id, Name = t.Name };
             return CreatedAtAction(nameof(GetById), new { id = t.Id }, resp);
         }
         catch (ArgumentException ex)
