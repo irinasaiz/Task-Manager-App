@@ -15,5 +15,7 @@ public class TaskItem
 
     public void SetId(int id) => Id = id;
 
+    public void Rename(string name) => Name = name;
+
     public void Complete() => IsCompleted = true;
 }

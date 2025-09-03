@@ -20,7 +20,7 @@ public class TasksController : ControllerBase
         return Ok(resp);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<TaskResponse>> GetById(int id, CancellationToken ctx)
     {
         var task = (await _service.GetAllAsync(ctx)).FirstOrDefault(t => t.Id == id);
@@ -44,5 +44,15 @@ public class TasksController : ControllerBase
             return BadRequest(new ProblemDetails { Title = "Invalid input", Detail = ex.Message, Status = StatusCodes.Status400BadRequest });
         }
     }
-    
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<TaskResponse>> Update(int id, [FromBody] UpdateTaskRequest req,
+        CancellationToken ctx)
+    {
+        var updated = await _service.UpdateAsync(id, req.Title, ctx);
+        if (updated is null) 
+            return NotFound();
+        return NoContent();
+    }
+
 }

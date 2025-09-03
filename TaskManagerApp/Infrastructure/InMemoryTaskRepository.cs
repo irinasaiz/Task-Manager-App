@@ -21,4 +21,17 @@ public class InMemoryTaskRepository : ITaskRepository
     {
         return Task.FromResult((IReadOnlyList < TaskItem > )_store.Values.OrderBy(x => x.Id).ToList());
     }
+
+    public Task<TaskItem?> GetByIdAsync(int id, CancellationToken ct = default)
+    {
+        _store.TryGetValue(id, out var item);
+        return Task.FromResult(item);
+    }
+
+    public Task<TaskItem?> UpdateAsync(TaskItem task, CancellationToken ctx = default)
+    {
+        if (!_store.ContainsKey(task.Id)) return Task.FromResult<TaskItem?>(null);
+        _store[task.Id] = task;
+        return Task.FromResult<TaskItem?>(task);
+    }
 }

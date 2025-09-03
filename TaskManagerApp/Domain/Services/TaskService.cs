@@ -17,4 +17,14 @@ public class TaskService
 
     public Task<IReadOnlyList<TaskItem>> GetAllAsync(CancellationToken ctx = default)
         => _repo.GetAllAsync(ctx);
+
+    public async Task<TaskItem?> UpdateAsync(int id, string name, CancellationToken ctx = default)
+    {
+        TaskItem? existing = await _repo.GetByIdAsync(id, ctx);
+        if (existing is null) return null;
+
+        existing.Rename(name);
+
+        return await _repo.UpdateAsync(existing, ctx);
+    }
 }
