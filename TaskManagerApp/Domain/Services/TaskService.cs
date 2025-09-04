@@ -21,10 +21,17 @@ public class TaskService
     public async Task<TaskItem?> UpdateAsync(int id, string name, CancellationToken ctx = default)
     {
         TaskItem? existing = await _repo.GetByIdAsync(id, ctx);
-        if (existing is null) return null;
+        if (existing is null) 
+            return null;
 
         existing.Rename(name);
 
         return await _repo.UpdateAsync(existing, ctx);
+    }
+
+    public async Task<bool> DeleteAsync(int id, CancellationToken ctx)
+    {
+        bool existing = await _repo.DeleteByIdAsync(id, ctx);
+        return existing;
     }
 }

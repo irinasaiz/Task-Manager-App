@@ -29,7 +29,7 @@ public class TasksController : ControllerBase
         var resp = new TaskResponse { Id = task.Id, Name = task.Name };
         return Ok(resp);
     }
-
+    
     [HttpPost]
     public async Task<ActionResult<TaskResponse>> Create([FromBody] CreateTaskRequest req, CancellationToken ctx)
     {
@@ -55,4 +55,12 @@ public class TasksController : ControllerBase
         return NoContent();
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken ctx)
+    {
+        var deleted = await _service.DeleteAsync(id, ctx);
+        if (deleted is false)
+            return NotFound();
+        return NoContent();
+    }
 }

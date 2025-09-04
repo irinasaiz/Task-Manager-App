@@ -8,4 +8,5 @@ public interface ITaskRepository
     Task<TaskItem> AddAsync(TaskItem task, CancellationToken ctx);
     Task<TaskItem?> GetByIdAsync(int id, CancellationToken ctx);
     Task<TaskItem?> UpdateAsync(TaskItem task, CancellationToken ctx);
+    Task<bool> DeleteByIdAsync(int id, CancellationToken ctx);
 }

@@ -22,7 +22,7 @@ public class InMemoryTaskRepository : ITaskRepository
         return Task.FromResult((IReadOnlyList < TaskItem > )_store.Values.OrderBy(x => x.Id).ToList());
     }
 
-    public Task<TaskItem?> GetByIdAsync(int id, CancellationToken ct = default)
+    public Task<TaskItem?> GetByIdAsync(int id, CancellationToken ctx = default)
     {
         _store.TryGetValue(id, out var item);
         return Task.FromResult(item);
@@ -33,5 +33,10 @@ public class InMemoryTaskRepository : ITaskRepository
         if (!_store.ContainsKey(task.Id)) return Task.FromResult<TaskItem?>(null);
         _store[task.Id] = task;
         return Task.FromResult<TaskItem?>(task);
+    }
+
+    public Task<bool> DeleteByIdAsync(int id, CancellationToken ctx = default)
+    {
+        return Task.FromResult(_store.TryRemove(id, out _));
     }
 }
