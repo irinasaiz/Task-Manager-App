@@ -6,61 +6,82 @@ const API_URL = "https://localhost:7014/api/tasks";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newName, setNewName] = useState("");
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editingName, setEditingName] = useState("");
 
-  // Load tasks
+  // Load tasks on startup
   useEffect(() => {
-    axios.get(API_URL).then((res) => setTasks(res.data));
+    const fetchTasks = async () => {
+      const res = await axios.get(API_URL);
+      setTasks(res.data);
+    };
+    fetchTasks();
   }, []);
 
+  // Add task
   const addTask = async () => {
     if (!newName.trim()) return;
-    const res = await axios.post(API_URL, { name: newName });
+    const res = await axios.post(API_URL, { name: newName }); // expects Name in backend DTO
     setTasks([...tasks, res.data]);
     setNewName("");
   };
 
-  const toggleTask = async (task) => {
-    const updated = { ...task, isCompleted: !task.isCompleted };
-    await axios.put(`${API_URL}/${task.id}`, updated);
-    setTasks(tasks.map((t) => (t.id === task.id ? updated : t)));
-  };
-
+  // Delete task
   const deleteTask = async (id) => {
     await axios.delete(`${API_URL}/${id}`);
     setTasks(tasks.filter((t) => t.id !== id));
   };
 
+  // Start editing
+  const startEditing = (task) => {
+    setEditingTaskId(task.id);
+    setEditingName(task.name ?? task.name); // depending on backend DTO consistency
+  };
+
+  // Save edit
+  const saveEdit = async (id) => {
+    await axios.put(`${API_URL}/${id}`, { name: editingName });
+    setTasks(tasks.map((t) => (t.id === id ? { ...t, name: editingName } : t)));
+    setEditingTaskId(null);
+    setEditingName("");
+  };
+
   return (
-    <div style={{ margin: "2rem" }}>
+    <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
       <h1>Task Manager</h1>
 
+      {/* Add new task */}
       <div>
         <input
+          type="text"
+          placeholder="New task name"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="New task..."
         />
         <button onClick={addTask}>Add</button>
       </div>
 
+      {/* Task list */}
       <ul>
         {tasks.map((task) => (
-          <li key={task.id} style={{ margin: "0.5rem 0" }}>
-            <span
-              style={{
-                textDecoration: task.isCompleted ? "line-through" : "none",
-                cursor: "pointer",
-              }}
-              onClick={() => toggleTask(task)}
-            >
-              {task.name}
-            </span>
-            <button
-              style={{ marginLeft: "1rem", color: "red" }}
-              onClick={() => deleteTask(task.id)}
-            >
-              Delete
-            </button>
+          <li key={task.id} style={{ margin: "8px 0" }}>
+            {editingTaskId === task.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editingName}
+                  onChange={(e) => setEditingName(e.target.value)}
+                />
+                <button onClick={() => saveEdit(task.id)}>Save</button>
+                <button onClick={() => setEditingTaskId(null)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                {task.name ?? task.name}
+                <button onClick={() => startEditing(task)}>Edit</button>
+                <button onClick={() => deleteTask(task.id)}>Delete</button>
+              </>
+            )}
           </li>
         ))}
       </ul>
