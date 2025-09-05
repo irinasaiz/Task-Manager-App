@@ -1,0 +1,2 @@
+# Always normalize to LF in repo, but checkout CRLF on Windows
+* text=auto

@@ -15,7 +15,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepository>(); //one for the whole app
 builder.Services.AddScoped<TaskService>(); //one per HTTP request
 
+//Front end
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
