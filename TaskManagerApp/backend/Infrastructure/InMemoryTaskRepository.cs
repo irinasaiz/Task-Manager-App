@@ -7,13 +7,13 @@ namespace Infrastructure;
 public class InMemoryTaskRepository : ITaskRepository
 {
     private readonly ConcurrentDictionary<int, TaskItem> _store = new();
-    private int _nextId = 1;
+    private int _currentId = 0;
 
     public Task<TaskItem> AddAsync(TaskItem task, CancellationToken ctx)
     {
-        task.SetId(_nextId);
-        _store[_nextId] = task;
-        _nextId++; //TODO: increment thread safe
+        int id = Interlocked.Increment(ref _currentId);
+        task.SetId(id);
+        _store[id] = task;
         return Task.FromResult(task);
     }
 

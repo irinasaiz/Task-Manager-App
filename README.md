@@ -36,9 +36,5 @@ The code is organized in a DDD manner. This ensures separation of concerns.
 Dependency Injection is implemented using the default DI container in dotnet.
 
 ## 3. Future improvements
-### Thread safety
-The repository pattern is implemented right now by holding the data in a concurrent dictionary.
-This ensures thread safety. A more efficient approach would be to hold the data in a structure that is not thread safe and protect it with a lock.
-However, task ID generation is currently not thread-safe and may result in duplicate IDs under heavy concurrency. This will be addressed soon.
 ### Unit tests are not implemented yet
 Unit tests can be implemented using MSTest and Moq, or other technologies.
